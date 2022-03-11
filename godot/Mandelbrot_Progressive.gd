@@ -1,7 +1,7 @@
 extends Node2D
 
-var width = 900
-var height = 900
+var width = 1000
+var height = 1000
 var iterations = 255
 var bounds = Rect2(-1, 0, 4, 4)
 var points = []
@@ -9,10 +9,10 @@ var reached_nan = []
 var img = Image.new()
 var threads = []
 var next_texture = null
-var thread_count = 3
+var thread_count = 6
 var tex = ImageTexture.new()
 var threads_need_to_stop = false
-
+var current_iteration = 0
 
 func _exit_tree():
 	cleanup()
@@ -60,12 +60,12 @@ func draw_row(y, iteration_number):
 		var value = points[i]
 		var screen_point = Vector2(i%width, i / width)
 		var set_point = screen_space_to_set_space(screen_point)
-		if is_nan(value.x) and is_nan(value.y):
+		if is_nan(value.x) or is_nan(value.y):
 			img.set_pixel(screen_point.x, screen_point.y, Color8(0,0,reached_nan[i]))
 			continue
 		value = complex_multiply(value, value)
 		value += set_point
-		if is_nan(value.x) and is_nan(value.y):
+		if is_nan(value.x) or is_nan(value.y):
 			reached_nan[i] = iteration_number
 		points[i] = value
 		img.set_pixel(screen_point.x, screen_point.y, Color(value.x, value.y, 0))
@@ -106,7 +106,8 @@ func _process(delta):
 	var value_at_mouse = points[point_index]
 	var nan_track = reached_nan[point_index]
 	var message = "Position: %s  Value: %s Reached NaN at iteration %s" % [mouse_set_pos, value_at_mouse, nan_track]
-	$UILayer/UI/Label.text = message
+	$UILayer/UI/TopBar/Label.text = message
+	$UILayer/UI/BottomBar/Label.text = "Current iteration: %s Focus: %s" % [current_iteration, bounds]
 	tex.create_from_image(img)
 	if Input.is_mouse_button_pressed(BUTTON_LEFT):
 		bounds.size /= 8
@@ -116,9 +117,15 @@ func _process(delta):
 
 func do_iterations(params):
 	var starting = params[0]
+	var ending = height
 	var jump = params[1]
+
 	for iteration in range(iterations):
+		if starting == 0:
+			current_iteration = iteration
 		if threads_need_to_stop:
 			return
-		for y in range(starting, height, jump):
+		for y in range(starting, ending, jump):
 			draw_row(y, iteration)
+		
+			

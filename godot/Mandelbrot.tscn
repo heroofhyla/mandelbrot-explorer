@@ -17,14 +17,38 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/UI"]
+[node name="TopBar" type="ColorRect" parent="UILayer/UI"]
 margin_right = 900.0
 margin_bottom = 24.0
 color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Label" type="Label" parent="UILayer/UI"]
-margin_right = 40.0
-margin_bottom = 14.0
+[node name="Label" type="Label" parent="UILayer/UI/TopBar"]
+margin_left = 3.0
+margin_top = 5.0
+margin_right = 43.0
+margin_bottom = 19.0
+text = "hello"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BottomBar" type="ColorRect" parent="UILayer/UI"]
+margin_top = 876.0
+margin_right = 900.0
+margin_bottom = 900.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="UILayer/UI/BottomBar"]
+margin_left = 4.0
+margin_top = 6.0
+margin_right = 44.0
+margin_bottom = 20.0
 text = "hello"
 __meta__ = {
 "_edit_use_anchors_": false
