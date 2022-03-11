@@ -5,11 +5,12 @@ thread working on a line at a time.  The number of threads is configurable; my
 PC seems to choke if I use more than 4 or 5.
 
 For each pixel, the red and yellow channels represent the real and imaginary
-components of the value at that point, for the current iteration. If either the
-real or imaginary component ever reaches NaN (not-a-number), then the point is
-outside the set. For points outside the set, the blue channel represents the
-number of the first iteration where the point was calculated to be outside the
-set. The iteration count is capped at 255.
+components of the value at that point, for the current iteration. If the
+magnitude of the number reaches 4, or if either component reaches NaN, the
+number is outside the set. For points outside the set, the blue channel is set
+to 128 and the red and green channels represent the number of the first
+iteration where the point was calculated to be outside the set. The iteration
+count is capped at 256.
 
 Whenever you click the mouse within the image, the display zooms in 8x at the
 clicked point and the iterations start over. Floating point errors start to
@@ -78,7 +79,7 @@ root of the repository and replacing the placeholder with your itch username.
 ```
 mkdir cred
 cd cred
-echo "USERNAME=<your itch.io username goes here>" > itch_username.sh
+echo "ACCOUNT=<your itch.io username goes here>" > itch_username.sh
 butler login -i itch.cred
 ```
 

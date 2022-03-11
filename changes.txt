@@ -1,1 +1,11 @@
+## Changes since v0.1.0
+
+- Updated README
+- Upped the max iteration count from 255 to 256
+- Changed the out-of-set color
+- Sped up rendering with smarter out-of-set checking (unfortunately leads to
+  uglier intermediate renders)
+
+## Original Version
+
 Implemented the project

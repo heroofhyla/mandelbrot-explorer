@@ -2,7 +2,7 @@ extends Node2D
 
 var width = 1000
 var height = 1000
-var iterations = 255
+var iterations = 256
 var bounds = Rect2(-1, 0, 4, 4)
 var points = []
 var reached_nan = []
@@ -63,14 +63,16 @@ func draw_row(y, iteration_number):
 		var value = points[i]
 		var screen_point = Vector2(i%width, i / width)
 		var set_point = screen_space_to_set_space(screen_point)
-		if is_nan(value.x) or is_nan(value.y):
-			img.set_pixel(screen_point.x, screen_point.y, Color8(0,0,reached_nan[i]))
+		if value.length_squared() >= 4 or is_nan(value.x) or is_nan(value.y):
+		#if is_nan(value.x) or is_nan(value.y):
+			img.set_pixel(screen_point.x, screen_point.y, Color8(reached_nan[i], reached_nan[i], 100))
 			continue
 		value = complex_multiply(value, value)
 		value += set_point
-		if is_nan(value.x) or is_nan(value.y):
+		if value.length_squared() >= 4 or is_nan(value.x) or is_nan(value.y):
 			reached_nan[i] = iteration_number
 		points[i] = value
+		#img.set_pixel(screen_point.x, screen_point.y, Color.black)
 		img.set_pixel(screen_point.x, screen_point.y, Color(value.x, value.y, 0))
 	
 
