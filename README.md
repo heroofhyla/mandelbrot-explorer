@@ -1,7 +1,26 @@
-This repository is a reusable template for a Godot project intended to be
-published to https://itch.io.
+This is a Mandelbrot Set generator written using the Godot game engine.
 
-## Setup
+It progressively renders each iteration of the set to the screen, with each
+thread working on a line at a time.  The number of threads is configurable; my
+PC seems to choke if I use more than 4 or 5.
+
+For each pixel, the red and yellow channels represent the real and imaginary
+components of the value at that point, for the current iteration. If either the
+real or imaginary component ever reaches NaN (not-a-number), then the point is
+outside the set. For points outside the set, the blue channel represents the
+number of the first iteration where the point was calculated to be outside the
+set. The iteration count is capped at 255.
+
+Whenever you click the mouse within the image, the display zooms in 8x at the
+clicked point and the iterations start over. Floating point errors start to
+become very obvious after zooming in a few times, which means this program is
+not suitable for deep exploration.
+
+## Building and Publishing
+
+The code should work as-is in Godot. But if you want to build executables or
+publish to itch.io using the included scripts, you need to follow some
+additional steps.
 
 ### itch.io project setup
 
@@ -9,8 +28,8 @@ Create an itch.io project for your game. Leave it private for now. Make a note
 of the project's URL slug (the part of the URL after `itch.io/`), you will need
 this later.
 
-Choosing a good slug and is important; this name will be used for your 
-executables as well.
+Choosing a good slug is important; this name will be used for your executables
+as well.
 
 ### Software
 
@@ -52,41 +71,43 @@ find them.
 
 ### Itch credentials
 
-The deployment script expects to find an itch.io credentials file at 
-`cred/itch.cred`. Execute the following in bash to create these credentials,
-starting from the root of the repository.
+The deployment script expects to find itch.io credentials under `creds`.
+Execute the following in bash to create these credentials, starting from the
+root of the repository and replacing the placeholder with your itch username.
 
 ```
 mkdir cred
 cd cred
+echo "USERNAME=<your itch.io username goes here>" > itch_username.sh
 butler login -i itch.cred
 ```
 
 A browser window will automatically open to itch.io, prompting you to confirm
 that you want to allow access.
 
-Note that this credential file is listed in .gitignore, so it will not be saved
+Note that this cred directory is listed in .gitignore, so it will not be saved
 in your repository. You will need to regenerate it whenever you work on the
 project from a different machine.
 
 ### Game configuration
 
-Update your game configuration in scripts/config.sh. Fill in your itch.io
-username and the URL slug for your game. Take a note of the list of builds as
-well. Remove any builds you don't plan to support, and add any new builds you
-will need.
+Update your game configuration in `scripts/config.shq. Fill in the URL slug for
+your game. Take a note of the list of builds as well. Remove any builds you
+don't plan to support, and add any new builds you will need.
 
 The build names are in the format `build_preset_name:executable_file_name`. 
 You can name the build presets whatever you want; the names you choose here
 will be used for the itch.io upload channels and will also be included in the
 zip filenames for each platform.
 
-### Notes on project structure
+### Commit tagging
 
-This project structure includes an outer directory for all meta information such
-as build scripts, credential files, planning documents, etc. The actual Godot
-project is inside a subdirectory called "godot".
+As part of the build process, a version number is generated and written to
+version.txt, both at the root of the repository and in `godot/version_info/`.
+This version number is based on the output of `git describe`, and will fail if
+there are no tags in the repository. Make a habit of tagging before building.
 
-Inverted directory structures where the meta information is contained within a
-subdirectory are also valid.
+### Updating changelog
 
+The file `changes.txt` should be used as a changelog. It is automatically copied
+into `godot/version_info/` by the build script.

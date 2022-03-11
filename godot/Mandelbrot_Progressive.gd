@@ -9,7 +9,10 @@ var reached_nan = []
 var img = Image.new()
 var threads = []
 var next_texture = null
-var thread_count = 6
+# monitor your PC's CPU usage when adjusting this value. If you add enough
+# threads for CPU usage to hit 100%, you'll lock up pretty badly. 4 threads
+# keeps it at around 80% usage for me, which is okay.
+var thread_count = 4
 var tex = ImageTexture.new()
 var threads_need_to_stop = false
 var current_iteration = 0

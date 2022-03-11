@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
-"class": "AudioPoolPlayer",
-"language": "GDScript",
-"path": "res://audio/AudioPoolPlayer.gd"
-}, {
 "base": "Label",
 "class": "DirAllTextDisplay",
 "language": "GDScript",
@@ -24,21 +19,14 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://text_file_reader/FileText.gd"
 }, {
-"base": "AudioPoolPlayer",
-"class": "MusicPlayer",
-"language": "GDScript",
-"path": "res://audio/MusicPlayer.gd"
-}, {
 "base": "Object",
 "class": "TextFileReader",
 "language": "GDScript",
 "path": "res://text_file_reader/TextFileReader.gd"
 } ]
 _global_script_class_icons={
-"AudioPoolPlayer": "",
 "DirAllTextDisplay": "",
 "FileTextDisplay": "",
-"MusicPlayer": "",
 "TextFileReader": ""
 }
 

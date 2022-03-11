@@ -3,7 +3,8 @@ SCRIPT_DIR=`dirname "$SCRIPT_PATH"`
 
 cd "$SCRIPT_DIR"
 
-source build_config.sh
+source config.sh
+source ../cred/itch_username.sh
 
 BUILDS="$BUILDS license:license"
 
