@@ -1,11 +1,1 @@
-Below is an EXAMPLE change log. Replace this content with your own.
-
-## Changes since v0.2.0
-
-* Added a sound effect to the fireball spell.
-* Fixed the dragon respawning every time you entered the tavern.
-
-## Changes since v0.1.5
-
-* Added a new optional party member: Gertrude the Holy Avenger.
-  * She can be found between 6 PM and 10 PM at the church.
+Implemented the project
