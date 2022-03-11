@@ -1,0 +1,62 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Node",
+"class": "AudioPoolPlayer",
+"language": "GDScript",
+"path": "res://audio/AudioPoolPlayer.gd"
+}, {
+"base": "Label",
+"class": "DirAllTextDisplay",
+"language": "GDScript",
+"path": "res://text_file_reader/DirectoryText.gd"
+}, {
+"base": "Label",
+"class": "FileTextDisplay",
+"language": "GDScript",
+"path": "res://text_file_reader/FileText.gd"
+}, {
+"base": "AudioPoolPlayer",
+"class": "MusicPlayer",
+"language": "GDScript",
+"path": "res://audio/MusicPlayer.gd"
+}, {
+"base": "Object",
+"class": "TextFileReader",
+"language": "GDScript",
+"path": "res://text_file_reader/TextFileReader.gd"
+} ]
+_global_script_class_icons={
+"AudioPoolPlayer": "",
+"DirAllTextDisplay": "",
+"FileTextDisplay": "",
+"MusicPlayer": "",
+"TextFileReader": ""
+}
+
+[application]
+
+config/name="Mandelbrot"
+run/main_scene="res://Mandelbrot.tscn"
+config/icon="res://icon.png"
+
+[display]
+
+window/size/width=900
+window/size/height=900
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"

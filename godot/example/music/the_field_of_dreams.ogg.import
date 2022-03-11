@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/the_field_of_dreams.ogg-02b2d12a5a877794f347571063f9305c.oggstr"
+
+[deps]
+
+source_file="res://example/music/the_field_of_dreams.ogg"
+dest_files=[ "res://.import/the_field_of_dreams.ogg-02b2d12a5a877794f347571063f9305c.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

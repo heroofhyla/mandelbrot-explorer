@@ -1,0 +1,23 @@
+# Credentials
+/cred/
+
+# Lockfiles, backup files, etc.
+
+*.swp
+.~lock*
+*.mmpz.bak
+*.blend1
+*.pyc
+
+# Builds
+
+/build/
+
+# build metadata
+
+/version.txt
+/godot/version_info/
+
+# Godot imported files
+
+/godot/.import/

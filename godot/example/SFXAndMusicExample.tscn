@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://audio/MusicPlayer.gd" type="Script" id=1]
+[ext_resource path="res://audio/AudioPoolPlayer.gd" type="Script" id=2]
+[ext_resource path="res://example/SFXAndMusicExample.gd" type="Script" id=3]
+
+[node name="SFXAndMusicExample" type="Node2D"]
+script = ExtResource( 3 )
+__meta__ = {
+"_editor_description_": "This is an example of using AudioPoolPlayer to handle many simultaneous sound
+effects, and MusicPlayer to easily fade from one song to another."
+}
+
+[node name="SFXPlayer" type="Node" parent="."]
+script = ExtResource( 2 )
+
+[node name="MusicPlayer" type="Node" parent="."]
+script = ExtResource( 1 )
+stream_count = 2
+volume_linear = null
+fadeout_time = null
+
+[node name="NextSong" type="Button" parent="."]
+margin_left = 116.708
+margin_top = 110.471
+margin_right = 192.708
+margin_bottom = 130.471
+text = "Next Song"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Stop" type="Button" parent="."]
+margin_left = 116.708
+margin_top = 182.471
+margin_right = 192.708
+margin_bottom = 202.471
+text = "Stop"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlaySFX" type="Button" parent="."]
+margin_left = 688.708
+margin_top = 106.471
+margin_right = 764.708
+margin_bottom = 126.471
+text = "PlaySFX"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VolumeUp" type="Button" parent="."]
+margin_left = 66.3109
+margin_top = 145.749
+margin_right = 149.311
+margin_bottom = 165.749
+text = "Volume Up"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VolumeDown" type="Button" parent="."]
+margin_left = 162.194
+margin_top = 145.95
+margin_right = 245.194
+margin_bottom = 165.95
+text = "Volume Down"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="pressed" from="NextSong" to="." method="_on_NextSong_pressed"]
+[connection signal="pressed" from="Stop" to="." method="_on_Stop_pressed"]
+[connection signal="pressed" from="PlaySFX" to="." method="_on_PlaySFX_pressed"]
+[connection signal="pressed" from="VolumeUp" to="." method="_on_VolumeUp_pressed"]
+[connection signal="pressed" from="VolumeDown" to="." method="_on_VolumeDown_pressed"]
