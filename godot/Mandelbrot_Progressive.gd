@@ -1,9 +1,9 @@
 extends Node2D
 
-var width = 1280
-var height = 720
+var width = 1920
+var height = 1080
 var iterations = 512
-var bounds = Rect2(-1, 0, 6.4, 3.6)
+var bounds = Rect2(-1, 0, width/500, height/500)
 var points = []
 var reached_nan = []
 var img = Image.new()
@@ -17,7 +17,7 @@ var tex = ImageTexture.new()
 var threads_need_to_stop = false
 var threads_need_to_pause = false
 var current_iteration = 0
-var screenshot_semaphore = Semaphore.new()
+var screenshot_mutex = Mutex.new()
 
 func _exit_tree():
 	cleanup()
@@ -42,7 +42,6 @@ func startup():
 			reached_nan.push_back(-1)
 	threads_need_to_stop = false
 	for i in thread_count:
-		screenshot_semaphore.post()
 		var thread = Thread.new()
 		threads.push_back(thread)
 		thread.start(self, "do_iterations", [i, thread_count])
@@ -143,25 +142,10 @@ func _input(event):
 
 func handle_screenshot():
 	print("attempting to screenshot!")
-	var thread_index = 0
-	for thread in threads:
-		print("trying to grab all sempahores %s" % thread_index)
-		thread_index += 1
-		screenshot_semaphore.wait()
-	print("got them all.")
-	print("saving screenshot")
-	img.save_png("res://screenshot.png")
+	screenshot_mutex.lock()
 	OS.delay_msec(500)
-	print("done")
-	thread_index = 0
-	print("releasing all semaphores")
-	for thread in threads:
-		print(thread_index)
-		thread_index += 1
-		
-		screenshot_semaphore.post()
-	print("done")
-
+	img.save_png("res://screenshot.png")
+	screenshot_mutex.unlock()
 
 func do_iterations(params):
 	var starting = params[0]
@@ -169,10 +153,8 @@ func do_iterations(params):
 	var jump = params[1]
 
 	for iteration in range(iterations):
-		screenshot_semaphore.wait()
-		if starting == 0:
-			for thread in threads:
-				screenshot_semaphore.post()
+		screenshot_mutex.lock()
+		screenshot_mutex.unlock()
 		if starting == 0:
 			current_iteration = iteration
 		if threads_need_to_stop:
