@@ -11,19 +11,16 @@ centered = false
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="UI" type="Control" parent="UILayer"]
-margin_right = 40.0
-margin_bottom = 40.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TopBar" type="ColorRect" parent="UILayer/UI"]
-margin_right = 900.0
-margin_bottom = 24.0
+anchor_right = 1.0
+margin_bottom = 25.0
 color = Color( 0, 0, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Label" type="Label" parent="UILayer/UI/TopBar"]
 margin_left = 3.0
@@ -36,9 +33,10 @@ __meta__ = {
 }
 
 [node name="BottomBar" type="ColorRect" parent="UILayer/UI"]
-margin_top = 876.0
-margin_right = 900.0
-margin_bottom = 900.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -27.0
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false

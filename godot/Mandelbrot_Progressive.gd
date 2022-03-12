@@ -1,9 +1,9 @@
 extends Node2D
 
-var width = 1000
-var height = 1000
-var iterations = 256
-var bounds = Rect2(-1, 0, 4, 4)
+var width = 1280
+var height = 720
+var iterations = 512
+var bounds = Rect2(-1, 0, 6.4, 3.6)
 var points = []
 var reached_nan = []
 var img = Image.new()
@@ -15,12 +15,16 @@ var next_texture = null
 var thread_count = 4
 var tex = ImageTexture.new()
 var threads_need_to_stop = false
+var threads_need_to_pause = false
 var current_iteration = 0
+var screenshot_semaphore = Semaphore.new()
 
 func _exit_tree():
 	cleanup()
 
 func screen_space_to_set_space(pos: Vector2):
+	pos.x = clamp(pos.x, 0, width)
+	pos.y = clamp(pos.y, 0, height)
 	var final_pos = pos
 	final_pos = final_pos / Vector2(width, height)
 	final_pos *= bounds.size
@@ -38,6 +42,7 @@ func startup():
 			reached_nan.push_back(-1)
 	threads_need_to_stop = false
 	for i in thread_count:
+		screenshot_semaphore.post()
 		var thread = Thread.new()
 		threads.push_back(thread)
 		thread.start(self, "do_iterations", [i, thread_count])
@@ -58,14 +63,21 @@ func cleanup():
 	reached_nan.clear()
 	
 
+func to_color(num):
+	num *= 5
+	var num_sign = int(num)/256
+	if num_sign %2 == 0:
+		return Color8(num%256, num%256, 100)
+	else:
+		return Color8(256 - num%256, 256 - num%256, 100)
+
 func draw_row(y, iteration_number):
 	for i in range(width * y, width * y + width):
 		var value = points[i]
 		var screen_point = Vector2(i%width, i / width)
 		var set_point = screen_space_to_set_space(screen_point)
-		if value.length_squared() >= 4 or is_nan(value.x) or is_nan(value.y):
-		#if is_nan(value.x) or is_nan(value.y):
-			img.set_pixel(screen_point.x, screen_point.y, Color8(reached_nan[i], reached_nan[i], 100))
+		if reached_nan[i] >= 0:
+			img.set_pixel(screen_point.x, screen_point.y, to_color(reached_nan[i]))
 			continue
 		value = complex_multiply(value, value)
 		value += set_point
@@ -106,6 +118,9 @@ func complex_multiply(first: Vector2, second:Vector2) -> Vector2:
 
 func _process(delta):
 	var mouse_pos = get_global_mouse_position()
+	mouse_pos.x = clamp(int(mouse_pos.x), 0, width - 1)
+	mouse_pos.y = clamp(int(mouse_pos.y), 0, height - 1)
+	
 	var mouse_set_pos = screen_space_to_set_space(mouse_pos)
 	var point_index = mouse_pos.y * width + mouse_pos.x
 	var value_at_mouse = points[point_index]
@@ -120,17 +135,52 @@ func _process(delta):
 		cleanup()
 		startup()
 
+
+func _input(event):
+	if event.is_action_pressed("screenshot"):
+		handle_screenshot()
+
+
+func handle_screenshot():
+	print("attempting to screenshot!")
+	var thread_index = 0
+	for thread in threads:
+		print("trying to grab all sempahores %s" % thread_index)
+		thread_index += 1
+		screenshot_semaphore.wait()
+	print("got them all.")
+	print("saving screenshot")
+	img.save_png("res://screenshot.png")
+	OS.delay_msec(500)
+	print("done")
+	thread_index = 0
+	print("releasing all semaphores")
+	for thread in threads:
+		print(thread_index)
+		thread_index += 1
+		
+		screenshot_semaphore.post()
+	print("done")
+
+
 func do_iterations(params):
 	var starting = params[0]
 	var ending = height
 	var jump = params[1]
 
 	for iteration in range(iterations):
+		screenshot_semaphore.wait()
+		if starting == 0:
+			for thread in threads:
+				screenshot_semaphore.post()
 		if starting == 0:
 			current_iteration = iteration
 		if threads_need_to_stop:
 			return
+		if threads_need_to_pause:
+			pass
 		for y in range(starting, ending, jump):
 			draw_row(y, iteration)
+		
 		
 			
