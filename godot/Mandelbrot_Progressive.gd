@@ -2,8 +2,8 @@ extends Node2D
 
 var width = 1920
 var height = 1080
-var iterations = 512
-var bounds = Rect2(-1, 0, width/500, height/500)
+#var iterations = 512
+var bounds = Rect2(-1, 0, width/100, height/100)
 var points = []
 var reached_nan = []
 var img = Image.new()
@@ -152,7 +152,8 @@ func do_iterations(params):
 	var ending = height
 	var jump = params[1]
 
-	for iteration in range(iterations):
+	var iteration = 0
+	while true:
 		screenshot_mutex.lock()
 		screenshot_mutex.unlock()
 		if starting == 0:
@@ -163,6 +164,6 @@ func do_iterations(params):
 			pass
 		for y in range(starting, ending, jump):
 			draw_row(y, iteration)
-		
+		iteration += 1
 		
 			
