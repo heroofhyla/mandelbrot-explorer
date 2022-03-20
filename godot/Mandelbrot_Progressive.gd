@@ -4,7 +4,15 @@ var width = 1920
 var height = 1080
 #var iterations = 512
 var bounds = Rect2(-1, 0, width/100, height/100)
+
+# Previous number of iterations to store to test for perioodicity.
+# Memory usage is 64 bits * max_periodicity * width * height.
+var max_periodicity_tests = 15
 var points = []
+var in_set = []
+
+# used for detecting cycles
+var tortoise = []
 var reached_nan = []
 var img = Image.new()
 var threads = []
@@ -20,7 +28,9 @@ var current_iteration = 0
 var screenshot_mutex = Mutex.new()
 
 func _exit_tree():
+	print("shutting down...")
 	cleanup()
+	print("goodbye")
 
 func screen_space_to_set_space(pos: Vector2):
 	pos.x = clamp(pos.x, 0, width)
@@ -33,13 +43,19 @@ func screen_space_to_set_space(pos: Vector2):
 
 
 func startup():
+	print("starting up...")
 	tex.create_from_image(img)
 	$Sprite.texture = tex
+	#var blank_iteration = []
 	for x in range(width):
 		for y in range(height):
 			var point = Vector2.ZERO
 			points.push_back(point)
+			#blank_iteration.push_back(Vector2.INF)
 			reached_nan.push_back(-1)
+			in_set.push_back(false)
+
+	tortoise = points.duplicate(true)
 	threads_need_to_stop = false
 	for i in thread_count:
 		var thread = Thread.new()
@@ -54,12 +70,16 @@ func _ready():
 
 
 func cleanup():
+	print("Stopping threads...")
 	threads_need_to_stop = true
 	for thread in threads:
 		thread.wait_to_finish()
+	print("Clearing arrays...")
 	threads.clear()
 	points.clear()
 	reached_nan.clear()
+	tortoise.clear()
+	in_set.clear()
 	
 
 func to_color(num):
@@ -78,14 +98,34 @@ func draw_row(y, iteration_number):
 		if reached_nan[i] >= 0:
 			img.set_pixel(screen_point.x, screen_point.y, to_color(reached_nan[i]))
 			continue
+		
+		if in_set[i]:
+			img.set_pixel(screen_point.x, screen_point.y, Color.black)
+			continue
+		
 		value = complex_multiply(value, value)
 		value += set_point
+		
+		if iteration_number%2 == 1:
+			var tort = tortoise[i]
+			tort = complex_multiply(tort, tort)
+			tort += set_point
+			tortoise[i] = tort
+
+		#print(str(value) + " =? " + str(tortoise[i]))
+		if value == tortoise[i]:
+			in_set[i] = true
+			img.set_pixel(screen_point.x, screen_point.y, Color.black)
+			continue
+
+		
 		if value.length_squared() >= 4 or is_nan(value.x) or is_nan(value.y):
 			reached_nan[i] = iteration_number
 		points[i] = value
+		
 		#img.set_pixel(screen_point.x, screen_point.y, Color.black)
-		img.set_pixel(screen_point.x, screen_point.y, Color(value.x, value.y, 0))
-	
+		img.set_pixel(screen_point.x, screen_point.y, Color((value.x + 2) / 4, (value.y + 2) / 4, 0))
+
 
 # Multiplies two vectors together, treating the y component as the imaginary
 # component of a complex number

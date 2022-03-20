@@ -1,9 +1,10 @@
 ## Changes since v0.1.1
 
-- Upped max iterations to 512
-- Improved out-of-set coloring
+- Removed the iteration limit
 - Added screenshot hotkey (p)
 - Changed default resolution to 1080p
+- Improved color selection
+- Added cycle detection using Floyd's algorithm
 
 ## Changes since v0.1.0
 
@@ -15,4 +16,4 @@
 
 ## Original Version
 
-Implemented the project
+- Implemented the project
