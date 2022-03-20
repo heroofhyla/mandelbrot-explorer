@@ -10,7 +10,7 @@ var bounds = Rect2(-1, 0, width/100, height/100)
 var max_periodicity_tests = 15
 var points = []
 var in_set = []
-
+var row_all_clear = []
 # used for detecting cycles
 var tortoise = []
 var reached_nan = []
@@ -55,6 +55,9 @@ func startup():
 			reached_nan.push_back(-1)
 			in_set.push_back(false)
 
+	for y in range(height):
+		row_all_clear.push_back(false)
+		
 	tortoise = points.duplicate(true)
 	threads_need_to_stop = false
 	for i in thread_count:
@@ -80,6 +83,7 @@ func cleanup():
 	reached_nan.clear()
 	tortoise.clear()
 	in_set.clear()
+	row_all_clear.clear()
 	
 
 func to_color(num):
@@ -91,6 +95,7 @@ func to_color(num):
 		return Color8(256 - num%256, 256 - num%256, 100)
 
 func draw_row(y, iteration_number):
+	var all_clear = true
 	for i in range(width * y, width * y + width):
 		var value = points[i]
 		var screen_point = Vector2(i%width, i / width)
@@ -125,7 +130,8 @@ func draw_row(y, iteration_number):
 		
 		#img.set_pixel(screen_point.x, screen_point.y, Color.black)
 		img.set_pixel(screen_point.x, screen_point.y, Color((value.x + 2) / 4, (value.y + 2) / 4, 0))
-
+		all_clear = false
+	return all_clear
 
 # Multiplies two vectors together, treating the y component as the imaginary
 # component of a complex number
@@ -203,7 +209,11 @@ func do_iterations(params):
 		if threads_need_to_pause:
 			pass
 		for y in range(starting, ending, jump):
-			draw_row(y, iteration)
+			if row_all_clear[y]:
+				continue
+			var all_clear = draw_row(y, iteration)
+			if all_clear:
+				row_all_clear[y] = true
 		iteration += 1
 		
 			
