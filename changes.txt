@@ -7,6 +7,8 @@
 - Added cycle detection using Floyd's algorithm
 - Improved window scaling
 - Stops iterating automatically when no more detail possible at this zoom level
+- Added version tracker
+- Fixed web export settings to support threads
 
 ## Changes since v0.1.0
 

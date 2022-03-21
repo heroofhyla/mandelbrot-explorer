@@ -32,7 +32,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Mandelbrot"
+config/name="Mandelbrot Explorer"
 run/main_scene="res://Mandelbrot.tscn"
 config/icon="res://icon.png"
 

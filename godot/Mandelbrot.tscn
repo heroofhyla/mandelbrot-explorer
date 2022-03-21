@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Mandelbrot_Progressive.gd" type="Script" id=1]
 [ext_resource path="res://test_texture.png" type="Texture" id=2]
+[ext_resource path="res://text_file_reader/FileText.gd" type="Script" id=3]
 
 [node name="Mandelbrot" type="Node2D"]
 script = ExtResource( 1 )
@@ -28,11 +29,10 @@ margin_bottom = 25.0
 color = Color( 0, 0, 0, 1 )
 
 [node name="Label" type="Label" parent="UILayer/UI/TopBar"]
-margin_left = 3.0
-margin_top = 5.0
-margin_right = 43.0
-margin_bottom = 19.0
+anchor_bottom = 1.0
+margin_right = 32.0
 text = "hello"
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -48,11 +48,21 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="UILayer/UI/BottomBar"]
-margin_left = 4.0
-margin_top = 6.0
-margin_right = 44.0
-margin_bottom = 20.0
+anchor_bottom = 1.0
+margin_right = 32.0
 text = "hello"
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="FileTextDisplay" type="Label" parent="UILayer/UI/BottomBar"]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -116.0
+text = "v0.1.1-7-gd18f269"
+align = 2
+valign = 1
+script = ExtResource( 3 )
+source_file = "res://version_info/version.txt"
