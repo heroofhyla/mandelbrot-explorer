@@ -2,8 +2,10 @@ extends Node2D
 
 var width = 1920
 var height = 1080
+var window_width = 1280
+var window_height = 720
 #var iterations = 512
-var bounds = Rect2(-1, 0, width/100, height/100)
+var bounds = Rect2(-1, 0, window_width/100.0, window_height/100.0)
 
 # Previous number of iterations to store to test for perioodicity.
 # Memory usage is 64 bits * max_periodicity * width * height.
@@ -41,11 +43,19 @@ func screen_space_to_set_space(pos: Vector2):
 	final_pos += bounds.position - bounds.size / 2
 	return final_pos
 
+func scaled_screen_space_to_set_space(pos: Vector2):
+	pos.x = clamp(pos.x, 0, window_width)
+	pos.y = clamp(pos.y, 0, window_height)
+	var final_pos = pos
+	final_pos = final_pos / Vector2(window_width, window_height)
+	final_pos *= bounds.size
+	final_pos += bounds.position - bounds.size / 2
+	return final_pos
 
 func startup():
 	print("starting up...")
 	tex.create_from_image(img)
-	$Sprite.texture = tex
+	$UILayer/Sprite.texture = tex
 	#var blank_iteration = []
 	for x in range(width):
 		for y in range(height):
@@ -162,11 +172,13 @@ func complex_multiply(first: Vector2, second:Vector2) -> Vector2:
 
 
 func _process(delta):
+	window_width = get_viewport_rect().size.x
+	window_height = get_viewport_rect().size.y
 	var mouse_pos = get_global_mouse_position()
 	mouse_pos.x = clamp(int(mouse_pos.x), 0, width - 1)
 	mouse_pos.y = clamp(int(mouse_pos.y), 0, height - 1)
 	
-	var mouse_set_pos = screen_space_to_set_space(mouse_pos)
+	var mouse_set_pos = scaled_screen_space_to_set_space(mouse_pos)
 	var point_index = mouse_pos.y * width + mouse_pos.x
 	var value_at_mouse = points[point_index]
 	var nan_track = reached_nan[point_index]
@@ -187,10 +199,15 @@ func _input(event):
 
 
 func handle_screenshot():
+	var dir = Directory.new()
+	dir.open("res://")
+	if not dir.dir_exists("screenshots"):
+		dir.make_dir("screenshots")
 	print("attempting to screenshot!")
 	screenshot_mutex.lock()
 	OS.delay_msec(500)
-	img.save_png("res://screenshot.png")
+	var fname = "res://screenshots/screenshot-%s-%s.png" % [bounds, current_iteration]
+	img.save_png(fname)
 	screenshot_mutex.unlock()
 
 func do_iterations(params):
@@ -200,6 +217,7 @@ func do_iterations(params):
 
 	var iteration = 0
 	while true:
+		var all_rows_done = true
 		screenshot_mutex.lock()
 		screenshot_mutex.unlock()
 		if starting == 0:
@@ -214,6 +232,10 @@ func do_iterations(params):
 			var all_clear = draw_row(y, iteration)
 			if all_clear:
 				row_all_clear[y] = true
+			else:
+				all_rows_done = false
+		if all_rows_done:
+			return
 		iteration += 1
 		
-			
+

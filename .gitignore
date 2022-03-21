@@ -22,5 +22,5 @@
 
 /godot/.import/
 
-screenshot.png
-screenshot.png.import
+/screenshots/*.png
+/screenshots/*.png.import

@@ -5,6 +5,8 @@
 - Changed default resolution to 1080p
 - Improved color selection
 - Added cycle detection using Floyd's algorithm
+- Improved window scaling
+- Stops iterating automatically when no more detail possible at this zoom level
 
 ## Changes since v0.1.0
 
