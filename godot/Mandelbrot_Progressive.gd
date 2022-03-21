@@ -6,10 +6,6 @@ var window_width = 1280
 var window_height = 720
 #var iterations = 512
 var bounds = Rect2(-1, 0, window_width/100.0, window_height/100.0)
-
-# Previous number of iterations to store to test for perioodicity.
-# Memory usage is 64 bits * max_periodicity * width * height.
-var max_periodicity_tests = 15
 var points = []
 var in_set = []
 var row_all_clear = []
@@ -18,7 +14,6 @@ var tortoise = []
 var reached_nan = []
 var img = Image.new()
 var threads = []
-var next_texture = null
 # monitor your PC's CPU usage when adjusting this value. If you add enough
 # threads for CPU usage to hit 100%, you'll lock up pretty badly. 4 threads
 # keeps it at around 80% usage for me, which is okay.
@@ -34,7 +29,7 @@ func _exit_tree():
 	cleanup()
 	print("goodbye")
 
-func screen_space_to_set_space(pos: Vector2):
+func texture_space_to_set_space(pos: Vector2):
 	pos.x = clamp(pos.x, 0, width)
 	pos.y = clamp(pos.y, 0, height)
 	var final_pos = pos
@@ -43,7 +38,7 @@ func screen_space_to_set_space(pos: Vector2):
 	final_pos += bounds.position - bounds.size / 2
 	return final_pos
 
-func scaled_screen_space_to_set_space(pos: Vector2):
+func window_space_to_set_space(pos: Vector2):
 	pos.x = clamp(pos.x, 0, window_width)
 	pos.y = clamp(pos.y, 0, window_height)
 	var final_pos = pos
@@ -52,6 +47,16 @@ func scaled_screen_space_to_set_space(pos: Vector2):
 	final_pos += bounds.position - bounds.size / 2
 	return final_pos
 
+func window_space_to_texture_space(pos: Vector2):
+	pos.x = clamp(pos.x, 0, window_width)
+	pos.y = clamp(pos.y, 0, window_height)
+	var final_pos = pos
+	final_pos = final_pos / Vector2(window_width, window_height)
+	final_pos *= Vector2(width,height)
+	final_pos.x = int(final_pos.x)
+	final_pos.y = int(final_pos.y)
+	return final_pos
+	
 func startup():
 	print("starting up...")
 	tex.create_from_image(img)
@@ -109,7 +114,7 @@ func draw_row(y, iteration_number):
 	for i in range(width * y, width * y + width):
 		var value = points[i]
 		var screen_point = Vector2(i%width, i / width)
-		var set_point = screen_space_to_set_space(screen_point)
+		var set_point = texture_space_to_set_space(screen_point)
 		if reached_nan[i] >= 0:
 			img.set_pixel(screen_point.x, screen_point.y, to_color(reached_nan[i]))
 			continue
@@ -178,8 +183,9 @@ func _process(delta):
 	mouse_pos.x = clamp(int(mouse_pos.x), 0, width - 1)
 	mouse_pos.y = clamp(int(mouse_pos.y), 0, height - 1)
 	
-	var mouse_set_pos = scaled_screen_space_to_set_space(mouse_pos)
-	var point_index = mouse_pos.y * width + mouse_pos.x
+	var mouse_set_pos = window_space_to_set_space(mouse_pos)
+	var mouse_texture_pos = window_space_to_texture_space(mouse_pos)
+	var point_index = mouse_texture_pos.y * width + mouse_texture_pos.x
 	var value_at_mouse = points[point_index]
 	var nan_track = reached_nan[point_index]
 	var message = "Position: %s  Value: %s Reached NaN at iteration %s" % [mouse_set_pos, value_at_mouse, nan_track]
