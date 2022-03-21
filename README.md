@@ -72,7 +72,7 @@ find them.
 
 ### Itch credentials
 
-The deployment script expects to find itch.io credentials under `creds`.
+The deployment script expects to find itch.io credentials under `cred/`.
 Execute the following in bash to create these credentials, starting from the
 root of the repository and replacing the placeholder with your itch username.
 
