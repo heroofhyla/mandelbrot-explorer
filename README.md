@@ -4,18 +4,18 @@ It progressively renders each iteration of the set to the screen, with each
 thread working on a line at a time.  The number of threads is configurable; my
 PC seems to choke if I use more than 4 or 5.
 
-For each pixel, the red and yellow channels represent the real and imaginary
-components of the value at that point, for the current iteration. If the
-magnitude of the number reaches 4, or if either component reaches NaN, the
-number is outside the set. For points outside the set, the blue channel is set
-to 128 and the red and green channels represent the number of the first
-iteration where the point was calculated to be outside the set. The iteration
-count is capped at 256.
+Pixels that are definitely inside the set are colored black. Pixels that are
+definitely outside the set are colored on a looping blue-yellow gradient based
+on how many iterations it took to determine that the point was outside the
+set. Pixels that are still undetermined are colored with a blend of red and
+green, with red representing the real component and green representing the
+imaginary component of the point.
 
 Whenever you click the mouse within the image, the display zooms in 8x at the
 clicked point and the iterations start over. Floating point errors start to
 become very obvious after zooming in a few times, which means this program is
-not suitable for deep exploration.
+not suitable for deep exploration (see 
+https://github.com/heroofhyla/mandelbrot-explorer/issues/2).
 
 ## Building and Publishing
 
