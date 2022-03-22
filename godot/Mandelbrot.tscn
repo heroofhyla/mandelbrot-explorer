@@ -33,9 +33,6 @@ anchor_bottom = 1.0
 margin_right = 32.0
 text = "hello"
 valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="BottomBar" type="ColorRect" parent="UILayer/UI"]
 anchor_top = 1.0

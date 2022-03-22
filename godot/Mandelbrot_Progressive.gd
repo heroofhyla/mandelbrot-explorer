@@ -1,33 +1,32 @@
 extends Node2D
 
+# CONFIGURATION OPTIONS, adjust these as needed
 var width = 1920
 var height = 1080
+var thread_count = 4
+var screenshot_directory = "screenshots"
+
+# INTERNAL VARIABLES, don't adjust these manually
 var window_width = 1280
 var window_height = 720
-#var iterations = 512
 var bounds = Rect2(-1, 0, window_width/100.0, window_height/100.0)
 var points = []
 var in_set = []
 var row_all_clear = []
-# used for detecting cycles
 var tortoise = []
 var reached_nan = []
-var img = Image.new()
-var threads = []
-# monitor your PC's CPU usage when adjusting this value. If you add enough
-# threads for CPU usage to hit 100%, you'll lock up pretty badly. 4 threads
-# keeps it at around 80% usage for me, which is okay.
-var thread_count = 4
-var tex = ImageTexture.new()
-var threads_need_to_stop = false
-var threads_need_to_pause = false
 var current_iteration = 0
+var img = Image.new()
+var tex = ImageTexture.new()
 var screenshot_mutex = Mutex.new()
+var threads = []
+var threads_need_to_stop = false
 
 func _exit_tree():
 	print("shutting down...")
 	cleanup()
 	print("goodbye")
+
 
 func texture_space_to_set_space(pos: Vector2):
 	pos.x = clamp(pos.x, 0, width)
@@ -38,6 +37,7 @@ func texture_space_to_set_space(pos: Vector2):
 	final_pos += bounds.position - bounds.size / 2
 	return final_pos
 
+
 func window_space_to_set_space(pos: Vector2):
 	pos.x = clamp(pos.x, 0, window_width)
 	pos.y = clamp(pos.y, 0, window_height)
@@ -46,6 +46,7 @@ func window_space_to_set_space(pos: Vector2):
 	final_pos *= bounds.size
 	final_pos += bounds.position - bounds.size / 2
 	return final_pos
+
 
 func window_space_to_texture_space(pos: Vector2):
 	pos.x = clamp(pos.x, 0, window_width)
@@ -56,25 +57,26 @@ func window_space_to_texture_space(pos: Vector2):
 	final_pos.x = int(final_pos.x)
 	final_pos.y = int(final_pos.y)
 	return final_pos
-	
+
+
 func startup():
 	print("starting up...")
 	tex.create_from_image(img)
 	$UILayer/Sprite.texture = tex
-	#var blank_iteration = []
+	
 	for x in range(width):
 		for y in range(height):
 			var point = Vector2.ZERO
 			points.push_back(point)
-			#blank_iteration.push_back(Vector2.INF)
 			reached_nan.push_back(-1)
 			in_set.push_back(false)
-
+	
 	for y in range(height):
 		row_all_clear.push_back(false)
 		
 	tortoise = points.duplicate(true)
 	threads_need_to_stop = false
+	
 	for i in thread_count:
 		var thread = Thread.new()
 		threads.push_back(thread)
@@ -90,8 +92,10 @@ func _ready():
 func cleanup():
 	print("Stopping threads...")
 	threads_need_to_stop = true
+	
 	for thread in threads:
 		thread.wait_to_finish()
+	
 	print("Clearing arrays...")
 	threads.clear()
 	points.clear()
@@ -99,22 +103,26 @@ func cleanup():
 	tortoise.clear()
 	in_set.clear()
 	row_all_clear.clear()
-	
+
 
 func to_color(num):
 	num *= 5
 	var num_sign = int(num)/256
+	
 	if num_sign %2 == 0:
 		return Color8(num%256, num%256, 100)
 	else:
 		return Color8(256 - num%256, 256 - num%256, 100)
 
+
 func draw_row(y, iteration_number):
 	var all_clear = true
+	
 	for i in range(width * y, width * y + width):
 		var value = points[i]
 		var screen_point = Vector2(i%width, i / width)
 		var set_point = texture_space_to_set_space(screen_point)
+		
 		if reached_nan[i] >= 0:
 			img.set_pixel(screen_point.x, screen_point.y, to_color(reached_nan[i]))
 			continue
@@ -131,21 +139,19 @@ func draw_row(y, iteration_number):
 			tort = complex_multiply(tort, tort)
 			tort += set_point
 			tortoise[i] = tort
-
-		#print(str(value) + " =? " + str(tortoise[i]))
+		
 		if value == tortoise[i]:
 			in_set[i] = true
 			img.set_pixel(screen_point.x, screen_point.y, Color.black)
 			continue
-
 		
 		if value.length_squared() >= 4 or is_nan(value.x) or is_nan(value.y):
 			reached_nan[i] = iteration_number
-		points[i] = value
 		
-		#img.set_pixel(screen_point.x, screen_point.y, Color.black)
+		points[i] = value
 		img.set_pixel(screen_point.x, screen_point.y, Color((value.x + 2) / 4, (value.y + 2) / 4, 0))
 		all_clear = false
+	
 	return all_clear
 
 # Multiplies two vectors together, treating the y component as the imaginary
@@ -171,7 +177,8 @@ func complex_multiply(first: Vector2, second:Vector2) -> Vector2:
 	var i = x_2 * y_1
 	var l = y_1 * y_2
 	
-	res.x = f - l #L's sign is flipped because it's the square of an imaginary number
+	#L's sign is flipped because it's the square of an imaginary number
+	res.x = f - l
 	res.y = o + i
 	return res
 
@@ -182,7 +189,6 @@ func _process(delta):
 	var mouse_pos = get_global_mouse_position()
 	mouse_pos.x = clamp(int(mouse_pos.x), 0, width - 1)
 	mouse_pos.y = clamp(int(mouse_pos.y), 0, height - 1)
-	
 	var mouse_set_pos = window_space_to_set_space(mouse_pos)
 	var mouse_texture_pos = window_space_to_texture_space(mouse_pos)
 	var point_index = mouse_texture_pos.y * width + mouse_texture_pos.x
@@ -192,6 +198,7 @@ func _process(delta):
 	$UILayer/UI/TopBar/Label.text = message
 	$UILayer/UI/BottomBar/Label.text = "Current iteration: %s Focus: %s" % [current_iteration, bounds]
 	tex.create_from_image(img)
+	
 	if Input.is_mouse_button_pressed(BUTTON_LEFT):
 		bounds.size /= 8
 		bounds.position = mouse_set_pos
@@ -206,42 +213,45 @@ func _input(event):
 
 func handle_screenshot():
 	var dir = Directory.new()
-	dir.open("res://")
-	if not dir.dir_exists("screenshots"):
-		dir.make_dir("screenshots")
+	dir.open(OS.get_executable_path().get_base_dir())
+	
+	if not dir.dir_exists(screenshot_directory):
+		dir.make_dir(screenshot_directory)
+	
 	print("attempting to screenshot!")
-	screenshot_mutex.lock()
-	OS.delay_msec(500)
-	var fname = "res://screenshots/screenshot-%s-%s.png" % [bounds, current_iteration]
+	var fname = "%s/screenshot-%s-%s.png" % [screenshot_directory, bounds, current_iteration]
 	img.save_png(fname)
-	screenshot_mutex.unlock()
+
 
 func do_iterations(params):
 	var starting = params[0]
 	var ending = height
 	var jump = params[1]
-
 	var iteration = 0
+	
 	while true:
 		var all_rows_done = true
 		screenshot_mutex.lock()
 		screenshot_mutex.unlock()
+		
 		if starting == 0:
 			current_iteration = iteration
+		
 		if threads_need_to_stop:
 			return
-		if threads_need_to_pause:
-			pass
+		
 		for y in range(starting, ending, jump):
 			if row_all_clear[y]:
 				continue
+			
 			var all_clear = draw_row(y, iteration)
+			
 			if all_clear:
 				row_all_clear[y] = true
 			else:
 				all_rows_done = false
+		
 		if all_rows_done:
 			return
-		iteration += 1
 		
-
+		iteration += 1
