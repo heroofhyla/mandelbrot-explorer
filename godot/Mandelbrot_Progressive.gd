@@ -195,8 +195,8 @@ func _process(delta):
 	var value_at_mouse = points[point_index]
 	var nan_track = reached_nan[point_index]
 	var message = "Position: %s  Value: %s Reached NaN at iteration %s" % [mouse_set_pos, value_at_mouse, nan_track]
-	$UILayer/UI/TopBar/Label.text = message
-	$UILayer/UI/BottomBar/Label.text = "Current iteration: %s Focus: %s" % [current_iteration, bounds]
+	$UILayer/UI/TopBar/MarginContainer/Label.text = message
+	$UILayer/UI/BottomBar/MarginContainer/Label.text = "Current iteration: %s Focus: %s" % [current_iteration, bounds]
 	tex.create_from_image(img)
 	
 	if Input.is_mouse_button_pressed(BUTTON_LEFT):

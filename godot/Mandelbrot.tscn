@@ -28,9 +28,17 @@ anchor_right = 1.0
 margin_bottom = 25.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="Label" type="Label" parent="UILayer/UI/TopBar"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/UI/TopBar"]
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = 32.0
+custom_constants/margin_right = 8
+custom_constants/margin_left = 8
+
+[node name="Label" type="Label" parent="UILayer/UI/TopBar/MarginContainer"]
+margin_left = 8.0
+margin_top = 5.0
+margin_right = 1272.0
+margin_bottom = 19.0
 text = "hello"
 valign = 1
 
@@ -44,22 +52,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="UILayer/UI/BottomBar"]
-anchor_bottom = 1.0
-margin_right = 32.0
-text = "hello"
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="FileTextDisplay" type="Label" parent="UILayer/UI/BottomBar"]
-anchor_left = 1.0
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/UI/BottomBar"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -116.0
+custom_constants/margin_right = 8
+custom_constants/margin_left = 8
+
+[node name="FileTextDisplay" type="Label" parent="UILayer/UI/BottomBar/MarginContainer"]
+margin_left = 8.0
+margin_top = 6.0
+margin_right = 1272.0
+margin_bottom = 20.0
 text = "v0.1.1-7-gd18f269"
 align = 2
 valign = 1
 script = ExtResource( 3 )
 source_file = "res://version_info/version.txt"
+
+[node name="Label" type="Label" parent="UILayer/UI/BottomBar/MarginContainer"]
+margin_left = 8.0
+margin_top = 6.0
+margin_right = 1272.0
+margin_bottom = 20.0
+text = "hello"
+valign = 1
