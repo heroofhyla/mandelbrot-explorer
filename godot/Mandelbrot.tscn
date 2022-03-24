@@ -42,6 +42,15 @@ margin_bottom = 19.0
 text = "hello"
 valign = 1
 
+[node name="ScreenshotLabel" type="Label" parent="UILayer/UI/TopBar/MarginContainer"]
+margin_left = 8.0
+margin_top = 5.0
+margin_right = 1272.0
+margin_bottom = 19.0
+text = "Press 'P' to export a screenshot"
+align = 2
+valign = 1
+
 [node name="BottomBar" type="ColorRect" parent="UILayer/UI"]
 anchor_top = 1.0
 anchor_right = 1.0
@@ -63,7 +72,7 @@ margin_left = 8.0
 margin_top = 6.0
 margin_right = 1272.0
 margin_bottom = 20.0
-text = "v0.1.1-7-gd18f269"
+text = "v0.2.1-0-g12c567a"
 align = 2
 valign = 1
 script = ExtResource( 3 )

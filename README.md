@@ -12,10 +12,11 @@ green, with red representing the real component and green representing the
 imaginary component of the point.
 
 Whenever you click the mouse within the image, the display zooms in 8x at the
-clicked point and the iterations start over. Floating point errors start to
-become very obvious after zooming in a few times, which means this program is
-not suitable for deep exploration (see 
-https://github.com/heroofhyla/mandelbrot-explorer/issues/2).
+clicked point and the iterations start over. The values are stored as 64-bit
+floating point numbers, which limits the maximum precision. If you go too deep
+(which takes a long time), you'll see pixelation.
+
+You can press `P` to take a screenshot.
 
 ## Building and Publishing
 
