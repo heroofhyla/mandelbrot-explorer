@@ -1,6 +1,7 @@
 ## Changes since v0.2.1
 
 - Increased from 32-bit to 64-bit precision, greatly increasing zoom limit
+- Changed default resolution to 720p
 
 ## Changes since v0.2.0
 
